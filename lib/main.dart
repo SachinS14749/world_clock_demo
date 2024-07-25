@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         /*home: HomeScreen(),*/
-        initialRoute: '/hone',
+        initialRoute: '/',
         routes: {
           '/': (context) => Loading(),
           '/hone': (context) => HomeScreen(),
