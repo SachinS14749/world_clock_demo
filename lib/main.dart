@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
         initialRoute: '/',
         routes: {
           '/': (context) => Loading(),
-          '/hone': (context) => HomeScreen(),
+          '/home': (context) => HomeScreen(),
           '/pick_location': (context) => ChooseLocation()
         });
   }

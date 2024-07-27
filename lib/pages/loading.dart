@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import 'package:world_clock_demo/Service/world_time.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -14,15 +17,23 @@ class _LoadingState extends State<Loading> {
   void initState() {
     super.initState();
     // getData();
-    getTestDataTime();
+    setUpWorldTime();
     print('Only code block inside getData() is blocking using await, not code '
         'outside it. That\'s why you are able to see this message first');
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
         body: SafeArea(
-            child: Text("Loading screen")
+            child: Padding(
+              padding: EdgeInsets.all(50),
+              child: Center(
+                child: SpinKitSpinningLines(
+                  color: Colors.blue,
+                  size: 80,
+                ),
+              ),
+            )
         ));
   }
 
@@ -36,25 +47,19 @@ class _LoadingState extends State<Loading> {
     print('title key value = ${map['title']}');
   }
 
-  Future<void> getTestDataTime() async {
-    Uri uri = Uri.parse('http://worldtimeapi.org/api/timezone/Asia/Kolkata');
-    Response response = await get(uri);
-    Map resMap = jsonDecode(response.body);
-    print(resMap);
-    String dateTimeStr = resMap["datetime"];
-    String utcOffsetStr = resMap["utc_offset"];
-    print('$dateTimeStr - $utcOffsetStr');
-    DateTime dateTime = DateTime.parse(dateTimeStr);
-    int hoursDiff = int.parse(utcOffsetStr.substring(1,3));
-    int minDiff = int.parse(utcOffsetStr.substring(4,6));
-    String plusOrMinus = utcOffsetStr.substring(0,1);
-
-    if(plusOrMinus == "+") {
-      dateTime = dateTime.add(Duration(hours: hoursDiff, minutes: minDiff));
-    }else {
-      dateTime = dateTime.subtract(Duration(hours: hoursDiff, minutes: minDiff));
-    }
-    print(dateTime);
+  Future<void> setUpWorldTime() async {
+    WorldTime worldTime = WorldTime(location: 'India', flag: 'flag', endPoint: 'Asia/Kolkata');
+    await worldTime.getTime();
+    /*print(worldTime.time);
+    setState(() {
+      time = worldTime.time;
+    });*/
+    Navigator.pushReplacementNamed(context, '/home', arguments: {
+      'location' : worldTime.location,
+      'flag': worldTime.flag,
+      'time': worldTime.time,
+      'isDayTime' : worldTime.isDayTime
+    });
   }
 
 }
